@@ -28,10 +28,12 @@ loop
     : '_' letters
     ;
 range
-    : var ':' var
-    | INT ':' INT
-    | var ':' INT
-    | INT ':' var
+    : val ':' val
+    ;
+val
+    : var
+    | INT
+    | FLOAT
     ;
 for_params
     : 'step' '{' INT|FLOAT '}'
