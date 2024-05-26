@@ -44,7 +44,7 @@ To output power to the leds we can simply reference the pins:
 @on pin; # Pin only needs to be specified if there are multiple active pins
 ```
 
-Check out [examples](https://github.com/tesinclair/lightsDSL/examples) for some full examples.
+Check out [examples](https://github.com/tesinclair/lightsDSL/tree/master/examples) for some full examples.
 
 
 
