@@ -6,7 +6,7 @@ create a pulsing light that changes between some chosen colors
 ###
 
 # Our led strip is connected to pin 10
-@use pins { 10 }; 
+@use { 10 }; 
 
 # Telling the program that we are using an led strip
 @decl type { strip }; 
@@ -24,10 +24,10 @@ create a pulsing light that changes between some chosen colors
 @pick $picked { $colors, 1 };
 
 # Set all pins to that color
-@color pin - { 1/100 } = $picked;
+@color pin - { 1:100 } = $picked;
 
 # Set max brightness to the commandline arg brightness, or 100 (if brightness isn't declared)
-@set $max_brightness = $args:brightness | 100;
+@set $max_brightness = $args:$brightness | 100;
 
 # set min brightness to 0
 @set $min_brightness = 0;
@@ -36,7 +36,7 @@ create a pulsing light that changes between some chosen colors
 @for ( $min_brightness:$max_brightness ) | $brightness | {
 
     # Set brightness on all pins to brightness
-    @brightess pin - { 1/100} = $brightness;
+    @brightess pin - { 1:100} = $brightness;
 
     # refresh the pin
     @run pin;
@@ -48,7 +48,7 @@ create a pulsing light that changes between some chosen colors
 # Specifying the step should be -1
 @for ( $max_brightness:$min_brightness ) | $brightness, step { -1 } | { 
     # Set brightness on all pins to the brightness
-    @brightness pin - { 1/100 } = $brightness; 
+    @brightness pin - { 1:100 } = $brightness; 
 
     # Refresh the pin
     @run pin;

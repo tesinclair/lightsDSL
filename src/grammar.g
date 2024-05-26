@@ -1,6 +1,6 @@
 root
     : '@' stat ';'
-    | '#'
+    | '#' any
     ;
 stat
     : 'use' '{' INT '}'
@@ -40,8 +40,8 @@ func
     : '{' root* '}'
     ;
 assign
-    : var '=' expr
-    | pin '=' expr
+    : var '=' expr ('|' expr)
+    | pin '=' expr ('|' expr)
     ;
 expr
     : var
@@ -65,6 +65,7 @@ type
     ;
 var
     : '$' letters
+    | '$' letters ':' var
     ;
 letters
     : letter+
@@ -72,4 +73,5 @@ letters
 letter
     : [a-zA-Z]
     ;
-
+any
+    : -> skip
