@@ -36,7 +36,7 @@ val
     | FLOAT
     ;
 for_params
-    : 'step' '{' INT|FLOAT '}'
+    : 'step' '{' val '}'
     ;
 func
     : '{' root* '}'
