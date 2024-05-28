@@ -18,3 +18,7 @@ token *token_new_token(char *str, size_t s_len, int type){
 
     return tok;
 }
+
+char *token_get_name(token *tok){
+    return '';
+}

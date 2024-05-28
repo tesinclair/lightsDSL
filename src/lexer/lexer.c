@@ -9,6 +9,7 @@ token **lexer_lex(lexer *lexer){
     token **token_stream;
     token *current_token;
     token_stream = malloc(sizeof *current_token);
+
     if (token_stream == NULL){
         printf("No memory\n");
         exit(EXIT_FAILURE);
@@ -137,7 +138,8 @@ token *lexer_next_token(lexer *lexer){
 
                     continue;
                 }else {
-                    throw_lexing_error("Now, I'm certain *that* shoudln't be there!\n<Parser Error> Unexpected Token: <%c>\n", lexer->c);
+                    ErrCode e = LEXER_UNEXPECTED_TOKEN;
+                    throw_lexing_error("Unexpected Token: <%c>\n", e, lexer->c);
                 }
         }
     }
@@ -198,6 +200,14 @@ int lexer_build_int(lexer *lexer){
     }
     buf[index] = '\0';
     val = atoi(buf);
+
+    // If atoi could not convert the string
+    // Maybe the function was called inappropriately, or 
+    // is_int didn't work properly
+    if ((val == 0) && !(strcmp(buf, "0") == 0)){
+        return -1;
+    }
+
     free(buf);
 
     return val;
@@ -226,5 +236,3 @@ double lexer_build_float(lexer *lexer){
 
     return val;
 }
-
-

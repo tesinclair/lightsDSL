@@ -29,4 +29,9 @@ typedef struct{
 // @errors: errors on no memory
 token *token_new_token(char *str, size_t s_len, int type);
 
+// @params: takes a token
+// @returns: a string representation fo the token
+// @errors: none
+char *token_get_name(token *tok);
+
 #endif
