@@ -7,6 +7,9 @@
 #include"../testing_assert.h"
 #include"../../lexer/lexer.h"
 
+/// Public, to be used for all tests
+void test_lexer();
+
 void test_lexer_next_token();
 
 void test_lexer_build_string();

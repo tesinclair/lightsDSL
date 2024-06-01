@@ -279,10 +279,15 @@ test_lexer_lex(){
     printf("Passed test <test_lexer_lex>\n");
 }
 
-int main(){
+void test_lexer(){
     test_lexer_build_string();
     test_lexer_build_int();
     test_lexer_consume();
     test_lexer_next_token();
     test_lexer_lex();
+}
+
+int main(){
+    test();
+    return 0;
 }
