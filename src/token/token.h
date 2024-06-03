@@ -1,22 +1,24 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 
-#define AT 0
-#define R_CURLY_BRACE 1
-#define L_CURLY_BRACE 2
-#define LETTERS 3
-#define SEMI 4
-#define R_PAREN 5
-#define L_PAREN 6
-#define COMMA 7
-#define UNDERSCORE 8
-#define COLON 9
-#define INT 10
-#define FLOAT 11
-#define EQUAL 12
-#define PIPE 13
-#define DOLLAR 14
-#define DASH 15
+enum token_types{
+    AT,
+    R_CURLY_BRACE,
+    L_CURLY_BRACE,
+    LETTERS,
+    SEMI,
+    R_PAREN,
+    L_PAREN,
+    COMMA,
+    UNDERSCORE,
+    COLON,
+    INT,
+    FLOAT,
+    EQUAL,
+    PIPE,
+    DOLLAR,
+    DASH
+};
 
 typedef struct{
     int type;
