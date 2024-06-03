@@ -1,5 +1,9 @@
-#include "../../utils/util.h"
+#include "../../src/utils/util.h"
 #include "../testing_assert.h"
+#include <stddef.h>
+
+#define TRUE 1
+#define FALSE 0
 
 void test_util_is_digit();
 

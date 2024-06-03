@@ -13,10 +13,27 @@ add_library(utils STATIC src/utils/util.c src/utils/util.h)
 add_library(lexer STATIC src/lexer/lexer.c src/lexer/lexer.h)
 add_library(token STATIC src/token/token.c src/token/token.h)
 
-# Set up dependencies for the lexer library
-target_link_libraries(lexer error utils token)
+target_link_libraries(
+    lexer 
+    PRIVATE 
+    error 
+    utils 
+    token 
+    PUBLIC 
+    m
+)
 
 add_executable(lights src/main.c)
+
+target_link_libraries(
+    lights
+    PRIVATE 
+    lexer 
+    error 
+    utils 
+    token
+    m
+)
 
 enable_testing()
 
@@ -24,14 +41,23 @@ add_library(test_assert STATIC tests/testing_assert.c tests/testing_assert.h)
 add_library(test_lexer STATIC tests/lexer/test_lexer.c tests/lexer/test_lexer.h)
 add_library(test_util STATIC tests/utils/test_util.c tests/utils/test_util.h)
 
+target_link_libraries(
+    test_lexer
+    PRIVATE
+    test_assert
+    test_util
+    lexer
+    error
+    utils
+    token
+    m
+)
 
 add_executable(test_lights tests/test.c)
 
-add_test(NAME TestLights COMMAND test_lights)
-
 target_link_libraries(
     test_lights
-    PRIVATE
+    PRIVATE 
     lexer
     token
     error
@@ -39,5 +65,7 @@ target_link_libraries(
     test_assert
     test_lexer
     test_util
+    m
 )
 
+add_test(NAME TestLights COMMAND test_lights)

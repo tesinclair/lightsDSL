@@ -5,7 +5,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include"../testing_assert.h"
-#include"../../lexer/lexer.h"
+#include"../../src/lexer/lexer.h"
 
 /// Public, to be used for all tests
 void test_lexer();

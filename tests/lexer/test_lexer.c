@@ -190,7 +190,7 @@ void test_lexer_next_token(){
     tok = lexer_next_token(&l);
 
     testing_assert(
-            tok->type == L_CURLY_BRACK,
+            tok->type == L_CURLY_BRACE,
             "Failed because <next_toke> returned \"%s\" instead of \"{\"",
             tok->text
             );
@@ -223,7 +223,7 @@ void test_lexer_next_token(){
     printf("Tests for <test_lexer_next_token> passed\n");
 }
 
-test_lexer_lex(){
+void test_lexer_lex(){
     token **tok_list;
 
     lexer l = {
@@ -260,7 +260,7 @@ test_lexer_lex(){
         DASH
     };
 
-    size_t comp_list_len = 21
+    size_t comp_list_len = 21;
 
     for (int i = 0; i < comp_list_len; i++){
         testing_assert(
@@ -282,12 +282,6 @@ test_lexer_lex(){
 void test_lexer(){
     test_lexer_build_string();
     test_lexer_build_int();
-    test_lexer_consume();
     test_lexer_next_token();
     test_lexer_lex();
-}
-
-int main(){
-    test();
-    return 0;
 }
