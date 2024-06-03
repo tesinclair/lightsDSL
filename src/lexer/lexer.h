@@ -3,8 +3,17 @@
 
 #include "../token/token.h"
 #include "../utils/util.h"
+#include "../errors/errors.h"
 
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<assert.h>
+#include<math.h>
+
+#ifndef EOF
 #define EOF -1
+#endif
 
 typedef struct{
     char* input;
@@ -15,7 +24,7 @@ typedef struct{
 // @params: takes a lexer
 // @returns: returns a token, can be found in token.h
 // @errors: None
-token lexer_next_token(lexer *lexer);
+token *lexer_next_token(lexer *lexer);
 
 // @params: takes a lexer
 // @returns: a string built from the lexer.

@@ -1,11 +1,12 @@
 #ifndef ERRORS_H
 #define ERRORS_H
 
-typedef enum{
+enum ErrCodes{
     LEXING_ERROR_UNDEFINED = 100,
     LEXING_ERROR_INVALID_CHARACTER,
+    LEXING_ERROR_UNEXPECTED_TOKEN,
     LEXING_ERROR_UNEXPECTED_EOF,
-} ErrCodes;
+};
 
 // @params: takes a format string error message, an errorcode 
 //          (defined above) and var_args of the data to format

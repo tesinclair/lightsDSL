@@ -5,7 +5,7 @@ int util_is_digit(char c){
 
     regcomp(&regex, "[:number:]", 0);
 
-    if (regexc(&regex, c, 0, NULL, 0) == REG_NOMATCH){
+    if (regexec(&regex, c, 0, NULL, 0) == REG_NOMATCH){
         return FALSE;
     }else{
         return TRUE;
@@ -17,7 +17,7 @@ int util_is_char(char c){
 
     regcomp(&regex, "[:word:]", 0);
 
-    if (regexc(&regex, c, 0, NULL, 0) == REG_NOMATCH){
+    if (regexec(&regex, c, 0, NULL, 0) == REG_NOMATCH){
         return FALSE;
     }else{
         return TRUE;

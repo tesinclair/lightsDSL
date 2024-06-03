@@ -1,13 +1,9 @@
 #include "lexer.h"
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include<assert.h>
-
 token **lexer_lex(lexer *lexer){
     token **token_stream;
-    token *current_token;
+    token *current_token;  
+
     token_stream = malloc(sizeof *current_token);
 
     if (token_stream == NULL){
@@ -16,11 +12,15 @@ token **lexer_lex(lexer *lexer){
     }
 
     current_token = lexer_next_token(lexer);
-    int index = 0;
+    size_t index = 0;
     
     while (current_token->type != EOF){
         token_stream[index] = current_token;
-        token_stream = realloc(token_stream, sizeof(token_stream) + sizeof(*current_token));
+        token_stream = realloc(
+                token_stream, 
+                sizeof(token_stream) + sizeof(*current_token)
+                );
+
         if (token_stream == NULL){
             printf("No memory\n");
             exit(EXIT_FAILURE);
@@ -43,7 +43,7 @@ token *lexer_next_token(lexer *lexer){
         if (lexer->c == '#'){
             do{
                 lexer_consume(lexer);
-            } while (lexer-> != '\n');
+            } while (lexer->c != '\n');
         }
 
         switch (lexer->c){
@@ -62,7 +62,7 @@ token *lexer_next_token(lexer *lexer){
                 lexer_consume(lexer);
                 tok = token_new_token("< { >", 5, L_CURLY_BRACE);
                 continue;
-            case ';'
+            case ';':
                 lexer_consume(lexer);
                 tok = token_new_token("< ; >", 5, SEMI);
                 continue;
@@ -109,7 +109,7 @@ token *lexer_next_token(lexer *lexer){
                     char *str_val;
 
                     val = lexer_build_int(lexer);
-                    len_val = (size_t) ciel(log10(num));
+                    len_val = (size_t) ceil(log10(val));
                     str_val = malloc(len_val + 1);
                     snprintf(str_val, len_val, "<%d>", val);
 
@@ -138,8 +138,11 @@ token *lexer_next_token(lexer *lexer){
 
                     continue;
                 }else {
-                    ErrCode e = LEXER_UNEXPECTED_TOKEN;
-                    throw_lexing_error("Unexpected Token: <%c>\n", e, lexer->c);
+                    throw_lexing_error(
+                            "Unexpected Token: <%c>\n", 
+                            LEXING_ERROR_UNEXPECTED_TOKEN, 
+                            lexer->c
+                            );
                 }
         }
     }
@@ -152,7 +155,7 @@ void lexer_consume(lexer *lexer){
     if (lexer->index > strlen(lexer->input)){
         lexer->c = EOF;
     }else{
-        lexer->c = lexer->input[index];
+        lexer->c = lexer->input[lexer->index];
     }
 }
 
@@ -160,12 +163,18 @@ void lexer_match(lexer *lexer, char x){
     if (lexer->c == x){
         lexer_consume(lexer);
     }else{
-        throw_lexing_error("Expecting %c; found %c", x, lexer->c);
+        throw_lexing_error(
+                "Expecting %c; found %c", 
+                LEXING_ERROR_INVALID_CHARACTER,
+                x,
+                lexer->c
+                );
     }
 }
 
 char* lexer_build_string(lexer *lexer){
     char *buf;
+    int index;
 
     buf = malloc(2);
     if (buf == NULL){
@@ -186,6 +195,7 @@ char* lexer_build_string(lexer *lexer){
 int lexer_build_int(lexer *lexer){
     int val;
     char *buf;
+    int index;
 
     buf = malloc(2);
     if (buf == NULL){
@@ -194,7 +204,7 @@ int lexer_build_int(lexer *lexer){
     }
     index = 0;
 
-    while (util_is_int(lexer->c)){
+    while (util_is_digit(lexer->c)){
         util_add_to_buf(buf, lexer->c, &index);
         lexer_consume(lexer);
     }
@@ -216,14 +226,17 @@ int lexer_build_int(lexer *lexer){
 double lexer_build_float(lexer *lexer){
     double val;
     char *buf;
-    int found_floatingpoint = FALSE
+    int found_floatingpoint = FALSE;
+    int index;
+
+    index = 0;
 
     buf = malloc(2);
     if (buf == NULL){
         printf("No memory\n");
         exit(EXIT_FAILURE);
     }
-    while (util_is_int(lexer->c) || (!found_floatingpoint && lexer->c == '.')){
+    while (util_is_digit(lexer->c) || (!found_floatingpoint && lexer->c == '.')){
         if (lexer->c == '.'){
             found_floatingpoint = TRUE;
         }

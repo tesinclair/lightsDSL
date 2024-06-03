@@ -20,5 +20,5 @@ token *token_new_token(char *str, size_t s_len, int type){
 }
 
 char *token_get_name(token *tok){
-    return '';
+    return "NOT IMPLEMENTED";
 }
