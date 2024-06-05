@@ -8,8 +8,16 @@ void testing_assert(int expr, char *failMsgFormat, ...){
 
         va_start(args, NULL);
 
-        fprintf(stderr, "<Assert Error>: Assertion failed\n");
+        // For some reason stdout wasn't being flushed before
+        fflush(stdout);
+        fprintf(stderr, "\n\n");
+        fprintf(stderr, "\033[1;31m=-=-=-=-=-=-=-=-=-=-=\n");
+        fprintf(stderr, "    TESTS FAILED\n");
+        fprintf(stderr, "=-=-=-=-=-=-=-=-=-=-=\n\n");
+        fprintf(stderr, "\033[0;31m<Assert Error>: Assertion failed\n\n");
+        fprintf(stderr, "\033[0;37m");
         fprintf(stderr, failMsgFormat, args);
+        fprintf(stderr, "\n\n");
 
         va_end(args);
     } 

@@ -3,7 +3,7 @@
 int util_is_digit(char c){
     regex_t regex;
 
-    regcomp(&regex, "[:number:]", 0);
+    regcomp(&regex, "[0-9]", 0);
 
     if (regexec(&regex, &c, 0, NULL, 0) == REG_NOMATCH){
         return FALSE;
@@ -15,7 +15,7 @@ int util_is_digit(char c){
 int util_is_char(char c){
     regex_t regex;
 
-    regcomp(&regex, "[:word:]", 0);
+    regcomp(&regex, "[a-zA-Z_]", 0);
 
     if (regexec(&regex, &c, 0, NULL, 0) == REG_NOMATCH){
         return FALSE;
@@ -31,6 +31,6 @@ void util_add_to_buf(char *buf, char c, int *pos){
         printf("No memory\n");
         exit(EXIT_FAILURE);
     }
-    *pos++;
+    (*pos)++;
 }
 

@@ -13,7 +13,7 @@ void test_lexer_build_string(){
 
     testing_assert(
             strcmp(buf, "string ") == 0,
-            "Failed because <lexer_build_string> returned \"%s\", instead of \"string\"",
+            "<lexer_build_string> returned \"%s\". Expected \"string\".",
             buf
             );
 
@@ -29,7 +29,7 @@ void test_lexer_build_string(){
 
     testing_assert(
             strcmp(buf, "") == 0,
-            "Failed because <lexer_build_string> returned \"%s\", instead of \"\"",
+            "<lexer_build_string> returned \"%s\". Expected \"\".",
             buf
             );
 
@@ -45,8 +45,7 @@ void test_lexer_build_string(){
 
     testing_assert(
             strcmp(buf, "hello") == 0,
-            "Failed because <lexer_build_string> returned \"%s\", instead of \"hello\"\n\
-            Maybe because it failed to stop adding to buf?",
+            "<lexer_build_string> returned \"%s\". Expected \"hello\".",
             buf
             );
 
@@ -62,7 +61,7 @@ void test_lexer_build_string(){
 
     testing_assert(
             strcmp(buf, "hello_world") == 0,
-            "Failed because <lexer_build_string> returned \"%s\", instead of \"hello_world\"",
+            "<lexer_build_string> returned \"%s\". Expected \"hello_world\".",
             buf
             );
 
@@ -78,7 +77,7 @@ void test_lexer_build_string(){
 
     testing_assert(
             strcmp(buf, "example") == 0,
-            "Failed because <lexer_build_string> returned \"%s\", instead of \"example\"",
+            "<lexer_build_string> returned \"%s\". Expected \"example\".",
             buf
             );
 
@@ -86,12 +85,10 @@ void test_lexer_build_string(){
 
     testing_assert(
             l_complex.index == 15,
-            "Failed because <lexer_build_string> did not push the index enough.\n\
-            Current index: \"%d\". Expected index: 15",
+            "<lexer_build_string> returned \"%d\". Expected \"15\".",
             l_complex.index 
             );
 
-    printf("Tests passed for <lexer_build_string>");
 }
 
 void test_lexer_build_int(){
@@ -107,12 +104,12 @@ void test_lexer_build_int(){
 
     testing_assert(
             result == 123,
-            "Failed because <lexer_build_int> returned \"%d\" instead of \"123\"",
+            "<lexer_build_int> returned \"%d\". Expected \"123\".",
             result
             );
 
     lexer l_boundry = {
-        .input = "123",
+        .input = "456",
         .index = 0,
         .c = '1'
     };
@@ -120,9 +117,8 @@ void test_lexer_build_int(){
     result = lexer_build_int(&l_normal);
 
     testing_assert(
-            result == 123,
-            "Failed because <lexer_build_int> returned \"%d\" instead of \"123\"\n\
-            Maybe because the function didn't stop correctly?",
+            result == 456,
+            "<lexer_build_int> returned \"%d\". Expected \"456\".",
             result
             );
 
@@ -136,8 +132,7 @@ void test_lexer_build_int(){
 
     testing_assert(
             result == -1,
-            "Failed because <lexer_build_int> returned \"%d\" instead of \"123\"\n\
-            Maybe because the function didn't stop correctly?",
+            "<lexer_build_int> returned \"%d\". Expected \"EOF\".",
             result
             );
 
@@ -151,7 +146,7 @@ void test_lexer_build_int(){
 
     testing_assert(
             result == 102,
-            "Failed because <lexer_build_int> returned \"%d\" instead of \"102\"",
+            "<lexer_build_int> returned \"%d\". Expected \"102\".",
             result
             );
 }
@@ -169,7 +164,7 @@ void test_lexer_next_token(){
 
     testing_assert(
             tok->type == AT,
-            "Failed because <next_toke> returned \"%s\" instead of \"@\"",
+            "<lexer_next_token> returned \"%s\". Expected \"@\".",
             tok->text
             );
 
@@ -180,7 +175,7 @@ void test_lexer_next_token(){
 
     testing_assert(
             tok->type == LETTERS,
-            "Failed because <next_toke> returned \"%s\" instead of \"set\"",
+            "<lexer_next_token> returned \"%s\". Expected \"set\".",
             tok->text
             );
 
@@ -191,7 +186,7 @@ void test_lexer_next_token(){
 
     testing_assert(
             tok->type == L_CURLY_BRACE,
-            "Failed because <next_toke> returned \"%s\" instead of \"{\"",
+            "<lexer_next_token> returned \"%s\". Expected \"{\".",
             tok->text
             );
 
@@ -202,7 +197,7 @@ void test_lexer_next_token(){
 
     testing_assert(
             tok->type == INT,
-            "Failed because <next_toke> returned \"%s\" instead of \"123\"",
+            "<lexer_next_token> returned \"%s\". Expected \"123\".",
             tok->text
             );
 
@@ -213,14 +208,13 @@ void test_lexer_next_token(){
 
     testing_assert(
             tok->type == SEMI,
-            "Failed because <next_token> returned \"%s\" instead of \";\"",
+            "<lexer_next_token> returned \"%s\". Expected \";\".",
             tok->text
             );
 
     free(tok->text);
     free(tok);
 
-    printf("Tests for <test_lexer_next_token> passed\n");
 }
 
 void test_lexer_lex(){
@@ -265,10 +259,10 @@ void test_lexer_lex(){
     for (int i = 0; i < comp_list_len; i++){
         testing_assert(
                 comparison_list[i] == tok_list[i]->type,
-                "Lexer failed to return %d, returned %d instead for token: %s",
-                comparison_list[i],
+                "<lexer_lex> (\"%s\") returned \"%d\". Expected \"%d\".",
+                tok_list[i]->text,
                 tok_list[i]->type,
-                tok_list[i]->text
+                comparison_list[i]
                 );
         free(tok_list[i]->text);
         free(tok_list[i]);
@@ -276,12 +270,18 @@ void test_lexer_lex(){
 
     free(tok_list);
 
-    printf("Passed test <test_lexer_lex>\n");
 }
 
 void test_lexer(){
     test_lexer_build_string();
+    printf("\033[0;37m<test_lexer_build_string> \033[0;32mPASSED\n");
+
     test_lexer_build_int();
+    printf("\033[0;37m<test_lexer_build_int> \033[0;32mPASSED\n");
+
     test_lexer_next_token();
+    printf("\033[0;37m<test_lexer_next_token> \033[0;32mPASSED\n");
+
     test_lexer_lex();
+    printf("\033[0;37m<test_lexer_lex> \033[0;32mPASSED\n");
 }

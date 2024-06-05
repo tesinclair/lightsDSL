@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ -d ./bin/ ]; then
-    rm -r ./bin
+    rm -rf ./bin
 fi
 
 if [[ "$1" = "--fresh" || "$2" = "--fresh" ]]; then
@@ -63,15 +63,12 @@ if [ "$1" = "-s" ]; then
     echo "Creating makefile"
 fi
                 
-mkdir bin
-cd bin
-cmake ..
-
 if [ "$1" = "-s" ]; then
     echo "making"
 fi
 
-cmake --bin .
+cmake -B bin
+cmake --build bin/
 
 echo "Finished."
 

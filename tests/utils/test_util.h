@@ -10,3 +10,5 @@ void test_util_is_digit();
 void test_util_is_char();
 
 void test_util_add_to_buf();
+
+void test_util();

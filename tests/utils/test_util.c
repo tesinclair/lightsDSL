@@ -18,7 +18,7 @@ void test_util_is_digit(){
 
         testing_assert(
                 result == TRUE, 
-                "Failed because %c did not return TRUE from function <util_is_digit> defined in utils/util.c",
+                "<util_is_digit> (\"%c\") returned \"FALSE\". Expected \"TRUE\".",
                 data_true[i]
                 );
 
@@ -29,12 +29,10 @@ void test_util_is_digit(){
 
         testing_assert(
                 result == FALSE,
-                "Failed because %c did not return FALSE from function <util_is_digit> defined in utils/util.c",
+                "<util_is_digit> (\"%c\") returned \"TRUE\". Expected \"FALSE\".",
                 data_false[i]
                 );
     }
-
-    printf("Tests for <util_is_digit> passed");
 }
 
 void test_util_is_char(){
@@ -55,7 +53,7 @@ void test_util_is_char(){
 
         testing_assert(
                 result == TRUE,
-                "Failed because %c did not return TRUE from function <util_is_char> defined in utils/util.c",
+                "<util_is_char> (\"%c\") returned \"FALSE\". Expected \"TRUE\".",
                 data_true[i]
                 );
     }
@@ -65,12 +63,10 @@ void test_util_is_char(){
 
         testing_assert(
                 result == FALSE,
-                "Failed because %c did not return FALSE from function <util_is_char> defined in utils/util.c",
+                "<util_is_char> (\"%c\") returned \"TRUE\". Expected \"FALSE\".",
                 data_false[i]
                 );
     }
-
-    printf("Tests for <util_is_char> passed");
 }
 
 void test_util_add_to_buf(){
@@ -91,7 +87,19 @@ void test_util_add_to_buf(){
 
     testing_assert(
         index == 14,
-        "Failed because util add to buf should have incremented index (%d) properly",
+        "<util_add_to_buf> returned \"%d\". Expected \"14\".",
         index
         );
+}
+
+
+void test_util(){
+    test_util_is_digit();
+    printf("\033[0;37m<test_util_is_digit> \033[0;32mPASSED\n");
+    
+    test_util_add_to_buf();
+    printf("\033[0;37m<test_util_add_to_buf> \033[0;32mPASSED\n");
+
+    test_util_is_char();
+    printf("\033[0;37m<test_util_is_char> \033[0;32mPASSED\n");
 }
