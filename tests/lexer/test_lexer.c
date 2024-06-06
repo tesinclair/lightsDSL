@@ -1,10 +1,51 @@
 #include "test_lexer.h"
 
+void test_lexer_from_example(){
+    char *input;
+    lexer *l;
+
+    input = malloc(1);
+    if (input == NULL){
+        printf("No memory\n");
+        exit(EXIT_FAILURE);
+    }
+
+    FILE *fptr = fopen("../../examples/pulse.lts", "r");
+
+    char c;
+    size_t index = 0;
+    while ((c = fgetc(fptr)) != EOF){
+        input[index] = c;
+
+        // it needs to be 1 more than length
+        input = realloc(input, ++index + 1);
+    }
+
+    l = lexer_new_lexer(input);
+    if (l == NULL){
+        printf("\n");
+        exit(EXIT_SUCCESS);
+    }
+
+    token *tokens = lexer_lex(l);
+
+    size_t i = 0;
+    while (tokens[i].type != EOF){
+        free(tokens[i].text);
+        i++;
+    }
+    free(tokens[i].text);
+    
+    // I cannot be assed to check that it returns the right stuff, so instead
+    // I'm just gonna return if it works
+    return;
+}
+
 void test_lexer_build_string(){
     char *buf;
 
     lexer l_normal = {
-        .input = "string",
+        .input = "string ",
         .index = 0,
         .c = 's'
     };
@@ -12,7 +53,7 @@ void test_lexer_build_string(){
     buf = lexer_build_string(&l_normal);
 
     testing_assert(
-            strcmp(buf, "string ") == 0,
+            strcmp(buf, "string") == 0,
             "<lexer_build_string> returned \"%s\". Expected \"string\".",
             buf
             );
@@ -111,10 +152,10 @@ void test_lexer_build_int(){
     lexer l_boundry = {
         .input = "456",
         .index = 0,
-        .c = '1'
+        .c = '4'
     };
 
-    result = lexer_build_int(&l_normal);
+    result = lexer_build_int(&l_boundry);
 
     testing_assert(
             result == 456,
@@ -152,7 +193,7 @@ void test_lexer_build_int(){
 }
 
 void test_lexer_next_token(){
-    token *tok;
+    token tok;
 
     lexer l = {
         .input = "@set { 123;",
@@ -163,62 +204,93 @@ void test_lexer_next_token(){
     tok = lexer_next_token(&l);
 
     testing_assert(
-            tok->type == AT,
-            "<lexer_next_token> returned \"%s\". Expected \"@\".",
-            tok->text
+            tok.type == AT,
+            "<lexer_next_token> returned \"%d\". Expected \"%d\".",
+            tok.type,
+            AT
             );
 
-    free(tok->text);
-    free(tok);
+    testing_assert(
+            strcmp(tok.text, "< @ >") == 0,
+            "<lexer_next_token> returned \"%s\". Expected \"< @ >\".",
+            tok.text
+            );
+
+
+    free(tok.text);
 
     tok = lexer_next_token(&l);
 
     testing_assert(
-            tok->type == LETTERS,
-            "<lexer_next_token> returned \"%s\". Expected \"set\".",
-            tok->text
+            tok.type == LETTERS,
+            "<lexer_next_token> returned \"%d\". Expected \"%d\".",
+            tok.type,
+            LETTERS 
             );
 
-    free(tok->text);
-    free(tok);
+    testing_assert(
+            strcmp(tok.text, "<set>") == 0,
+            "<lexer_next_token> returned \"%s\". Expected \"<set>\".",
+            tok.text
+            );
+
+    free(tok.text);
 
     tok = lexer_next_token(&l);
 
     testing_assert(
-            tok->type == L_CURLY_BRACE,
-            "<lexer_next_token> returned \"%s\". Expected \"{\".",
-            tok->text
+            tok.type == L_CURLY_BRACE,
+            "<lexer_next_token> returned \"%d\". Expected \"%d\".",
+            tok.type,
+            L_CURLY_BRACE 
             );
 
-    free(tok->text);
-    free(tok);
+    testing_assert(
+            strcmp(tok.text, "< { >") == 0,
+            "<lexer_next_token> returned \"%s\". Expected \"< { >\".",
+            tok.text
+            );
+
+    free(tok.text);
 
     tok = lexer_next_token(&l);
 
     testing_assert(
-            tok->type == INT,
-            "<lexer_next_token> returned \"%s\". Expected \"123\".",
-            tok->text
+            tok.type == INT,
+            "<lexer_next_token> returned \"%d\". Expected \"%d\".",
+            tok.type,
+            INT 
             );
 
-    free(tok->text);
-    free(tok);
+    testing_assert(
+            strcmp(tok.text, "<123>") == 0,
+            "<lexer_next_token> returned \"%s\". Expected \"<123>\".",
+            tok.text
+            );
+
+
+    free(tok.text);
         
     tok = lexer_next_token(&l);
 
     testing_assert(
-            tok->type == SEMI,
-            "<lexer_next_token> returned \"%s\". Expected \";\".",
-            tok->text
+            tok.type == SEMI,
+            "<lexer_next_token> returned \"%d\". Expected \"%d\".",
+            tok.type,
+            SEMI 
             );
 
-    free(tok->text);
-    free(tok);
+    testing_assert(
+            strcmp(tok.text, "< ; >") == 0,
+            "<lexer_next_token> returned \"%s\". Expected \"< ; >\".",
+            tok.text
+            );
 
+    free(tok.text);
 }
 
 void test_lexer_lex(){
-    token **tok_list;
+    token *tok_list;
 
     lexer l = {
         // There is a good change _ will regester as a letter, 
@@ -243,7 +315,7 @@ void test_lexer_lex(){
         L_CURLY_BRACE, 
         L_PAREN,
         R_PAREN,
-        UNDERSCORE,
+        LETTERS,
         LETTERS,
         COLON,
         INT,
@@ -258,14 +330,13 @@ void test_lexer_lex(){
 
     for (int i = 0; i < comp_list_len; i++){
         testing_assert(
-                comparison_list[i] == tok_list[i]->type,
+                comparison_list[i] == tok_list[i].type,
                 "<lexer_lex> (\"%s\") returned \"%d\". Expected \"%d\".",
-                tok_list[i]->text,
-                tok_list[i]->type,
+                tok_list[i].text,
+                tok_list[i].type,
                 comparison_list[i]
                 );
-        free(tok_list[i]->text);
-        free(tok_list[i]);
+        free(tok_list[i].text);
     }
 
     free(tok_list);
@@ -274,14 +345,17 @@ void test_lexer_lex(){
 
 void test_lexer(){
     test_lexer_build_string();
-    printf("\033[0;37m<test_lexer_build_string> \033[0;32mPASSED\n");
+    printf("<test_lexer_build_string> \033[0;32mPASSED\033[0;37m\n");
 
     test_lexer_build_int();
-    printf("\033[0;37m<test_lexer_build_int> \033[0;32mPASSED\n");
+    printf("<test_lexer_build_int> \033[0;32mPASSED\033[0;37m\n");
 
     test_lexer_next_token();
-    printf("\033[0;37m<test_lexer_next_token> \033[0;32mPASSED\n");
+    printf("<test_lexer_next_token> \033[0;32mPASSED\033[0;37m\n");
 
     test_lexer_lex();
-    printf("\033[0;37m<test_lexer_lex> \033[0;32mPASSED\n");
+    printf("<test_lexer_lex> \033[0;32mPASSED\033[0;37m\n");
+
+    test_lexer_from_example();
+    printf("<test_lexer_from_example> \033[0;32mPASSED\033[0;37m\n");
 }

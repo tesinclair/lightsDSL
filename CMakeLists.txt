@@ -40,6 +40,7 @@ enable_testing()
 add_library(test_assert STATIC tests/testing_assert.c tests/testing_assert.h)
 add_library(test_lexer STATIC tests/lexer/test_lexer.c tests/lexer/test_lexer.h)
 add_library(test_util STATIC tests/utils/test_util.c tests/utils/test_util.h)
+add_library(test_token STATIC tests/token/test_token.c tests/token/test_token.h)
 
 target_link_libraries(
     test_lexer
@@ -65,6 +66,7 @@ target_link_libraries(
     test_assert
     test_lexer
     test_util
+    test_token
     m
 )
 

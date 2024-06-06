@@ -39,7 +39,7 @@ void test_util_is_char(){
     int result;
 
     char data_true[] = {
-        'a', 'b', 'x', 'y', 'z', '_'
+        'a', 'b', 'X', 'Y', 'z', '_' 
     };
     size_t len_true = 6;
 
@@ -95,11 +95,11 @@ void test_util_add_to_buf(){
 
 void test_util(){
     test_util_is_digit();
-    printf("\033[0;37m<test_util_is_digit> \033[0;32mPASSED\n");
+    printf("<test_util_is_digit> \033[0;32mPASSED\033[0;37m\n");
     
     test_util_add_to_buf();
-    printf("\033[0;37m<test_util_add_to_buf> \033[0;32mPASSED\n");
+    printf("<test_util_add_to_buf> \033[0;32mPASSED\033[0;37m\n");
 
     test_util_is_char();
-    printf("\033[0;37m<test_util_is_char> \033[0;32mPASSED\n");
+    printf("<test_util_is_char> \033[0;32mPASSED\033[0;37m\n");
 }

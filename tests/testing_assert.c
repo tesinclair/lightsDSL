@@ -16,7 +16,7 @@ void testing_assert(int expr, char *failMsgFormat, ...){
         fprintf(stderr, "=-=-=-=-=-=-=-=-=-=-=\n\n");
         fprintf(stderr, "\033[0;31m<Assert Error>: Assertion failed\n\n");
         fprintf(stderr, "\033[0;37m");
-        fprintf(stderr, failMsgFormat, args);
+        vfprintf(stderr, failMsgFormat, args);
         fprintf(stderr, "\n\n");
 
         va_end(args);

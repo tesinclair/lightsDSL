@@ -1,9 +1,9 @@
-###
+[
 
 This is an example program to show how you can
 create a pulsing light that changes between some chosen colors
 
-###
+]
 
 # Our led strip is connected to pin 10
 @use { 10 }; 

@@ -7,9 +7,8 @@ void throw_lexing_error(char *errTextFormat, int errCode, ...){
 
     va_start(args, NULL);
 
-    fprintf(stderr, "Now, I'm certain *that* shouldn't be there!\n");
-    fprintf(stderr, "<Lexer Error>: %d\n", errCode);
-    fprintf(stderr, errTextFormat, args);
+    fprintf(stderr, "\033[1;31m<Error Lexing Code>: \033[0;31m%d\033[0;37m\n\n", errCode);
+    vfprintf(stderr, errTextFormat, args);
     fprintf(stderr, "\n");
 
     va_end(args);

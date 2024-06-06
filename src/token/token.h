@@ -34,11 +34,6 @@ typedef struct{
 //          and the type of the token (defined above)
 // @returns: a new token with the defined data
 // @errors: errors on no memory
-token *token_new_token(char *str, size_t s_len, int type);
-
-// @params: takes a token
-// @returns: a string representation fo the token
-// @errors: none
-char *token_get_name(token *tok);
+token token_new_token(char *str, size_t s_len, int type);
 
 #endif

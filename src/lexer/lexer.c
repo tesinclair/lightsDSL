@@ -1,24 +1,38 @@
 #include "lexer.h"
 
-token **lexer_lex(lexer *lexer){
-    token **token_stream;
-    token *current_token;  
+lexer *lexer_new_lexer(char *input){
+    if (input == NULL || strlen(input) <= 0){
+        return NULL;
+    }
+    lexer *l = malloc(sizeof *l);
 
-    token_stream = malloc(sizeof *current_token);
+    l->input = input;
+    l->index = 0;
+    l->c = input[0];
 
+    return l;
+}
+
+token *lexer_lex(lexer *lexer){
+    token *token_stream;
+    token current_token;  
+    size_t num_tokens = 0;
+
+    token_stream = malloc(sizeof &current_token);
     if (token_stream == NULL){
         printf("No memory\n");
         exit(EXIT_FAILURE);
     }
 
     current_token = lexer_next_token(lexer);
+    num_tokens++;
     size_t index = 0;
     
-    while (current_token->type != EOF){
+    while (current_token.type != EOF){
         token_stream[index] = current_token;
         token_stream = realloc(
                 token_stream, 
-                sizeof(token_stream) + sizeof(*current_token)
+                (num_tokens + 1) * sizeof(current_token) 
                 );
 
         if (token_stream == NULL){
@@ -26,82 +40,98 @@ token **lexer_lex(lexer *lexer){
             exit(EXIT_FAILURE);
         }
         current_token = lexer_next_token(lexer);
+        num_tokens++;
         index++;
     }
 
     // Should be EOF
-    assert(current_token->type == EOF);
+    assert(current_token.type == EOF);
     token_stream[index] = current_token;
 
     return token_stream;
 }
 
-token *lexer_next_token(lexer *lexer){
-    token *tok;
+token lexer_next_token(lexer *lexer){
+    token tok;
 
-    while (lexer->c != EOF){
-        if (lexer->c == '#'){
-            do{
-                lexer_consume(lexer);
-            } while (lexer->c != '\n');
+    if (lexer->c == EOF){
+        tok = token_new_token("<EOF>", 5, EOF);
+    }else if (lexer->c == '#'){
+
+        while (lexer->c != '\n'){
+            lexer_consume(lexer);
+
+            if (lexer->c == EOF)
+                lexer_next_token(lexer);
         }
+    }else if (lexer->c == '['){
+        while (lexer->c != ']'){
+            lexer_consume(lexer);
 
+            if (lexer->c == EOF){
+                throw_lexing_error(
+                        "Expected \"< ] >\", but found \"< %c >\"",
+                        LEXING_ERROR_UNEXPECTED_TOKEN,
+                        lexer->c
+                        );
+            }
+        }
+        lexer_consume(lexer);
+        lexer_next_token(lexer);
+    }else{
         switch (lexer->c){
             case ' ': case '\n': case '\t': case '\r':
                 lexer_consume(lexer);
-                continue;
+                tok = lexer_next_token(lexer);
+                break;
             case '@':
                 lexer_consume(lexer);
                 tok = token_new_token("< @ >", 5, AT);
-                continue;
+                break;
             case '}':
                 lexer_consume(lexer);
                 tok = token_new_token("< } >", 5, R_CURLY_BRACE);
-                continue;
+                break;
             case '{':
                 lexer_consume(lexer);
                 tok = token_new_token("< { >", 5, L_CURLY_BRACE);
-                continue;
+                break;
             case ';':
                 lexer_consume(lexer);
                 tok = token_new_token("< ; >", 5, SEMI);
-                continue;
+                break;
             case ')':
                 lexer_consume(lexer);
                 tok = token_new_token("< ) >", 5, R_PAREN);
-                continue;
+                break;
             case '(':
                 lexer_consume(lexer);
                 tok = token_new_token("< ( >", 5, L_PAREN);
-                continue;
+                break;
             case ',':
                 lexer_consume(lexer);
                 tok = token_new_token("< , >", 5, COMMA);
-                continue;
-            case '_':
-                lexer_consume(lexer);
-                tok = token_new_token("< _ >", 5, UNDERSCORE);
-                continue;
+                break;
             case ':':
                 lexer_consume(lexer);
                 tok = token_new_token("< : >", 5, COLON);
-                continue;
+                break;
             case '=':
                 lexer_consume(lexer);
                 tok = token_new_token("< = >", 5, EQUAL);
-                continue;
+                break;
             case '|':
                 lexer_consume(lexer);
                 tok = token_new_token("< | >", 5, PIPE);
-                continue;
+                break;
             case '$':
                 lexer_consume(lexer);
                 tok = token_new_token("< $ >", 5, DOLLAR);
-                continue;
+                break;
             case '-':
                 lexer_consume(lexer);
                 tok = token_new_token("< - >", 5, DASH);
-                continue;
+                break;
             default:
                 if (util_is_digit(lexer->c)){
                     int val;
@@ -109,15 +139,20 @@ token *lexer_next_token(lexer *lexer){
                     char *str_val;
 
                     val = lexer_build_int(lexer);
-                    len_val = (size_t) ceil(log10(val));
+
+                    // Adding 2 for < and >
+                    len_val = (size_t) (ceil(log10(val)) + 2);
+
                     str_val = malloc(len_val + 1);
-                    snprintf(str_val, len_val, "<%d>", val);
+                    if (str_val == NULL){
+                        printf("No Memory\n");
+                        exit(EXIT_FAILURE);
+                    }
+                    snprintf(str_val, len_val + 1, "<%d>", val);
 
-                    // Adding 2 for the < and >
-                    tok = token_new_token(str_val, len_val + 2, INT);
+                    tok = token_new_token(str_val, len_val, INT);
                     free(str_val);
-
-                    continue;
+                    break;
 
                 }else if(util_is_char(lexer->c)){
                     char *built_s;
@@ -130,29 +165,33 @@ token *lexer_next_token(lexer *lexer){
                     s_len = strlen(built_s) + 2;
 
                     final_buf = malloc(s_len + 1);
-                    snprintf(final_buf, s_len, "<%s>", built_s);
+                    if (final_buf == NULL){
+                        printf("No memory\n");
+                        exit(EXIT_FAILURE);
+                    }
+                    snprintf(final_buf, s_len + 1, "<%s>", built_s);
                     tok = token_new_token(final_buf, s_len, LETTERS);
 
                     free(built_s);
                     free(final_buf);
+                    break;
 
-                    continue;
                 }else {
                     throw_lexing_error(
-                            "Unexpected Token: <%c>\n", 
+                            "Unexpected Token: \"< %c >\"\n", 
                             LEXING_ERROR_UNEXPECTED_TOKEN, 
                             lexer->c
                             );
                 }
         }
+
     }
-    tok = token_new_token("<EOF>", 5, EOF);
     return tok;
 }
 
 void lexer_consume(lexer *lexer){
     lexer->index++;
-    if (lexer->index > strlen(lexer->input)){
+    if (lexer->index >= strlen(lexer->input)){
         lexer->c = EOF;
     }else{
         lexer->c = lexer->input[lexer->index];
