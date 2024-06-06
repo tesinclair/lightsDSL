@@ -62,7 +62,7 @@ token lexer_next_token(lexer *lexer){
             lexer_consume(lexer);
 
             if (lexer->c == EOF)
-                lexer_next_token(lexer);
+                tok = lexer_next_token(lexer);
         }
     }else if (lexer->c == '['){
         while (lexer->c != ']'){
@@ -77,7 +77,7 @@ token lexer_next_token(lexer *lexer){
             }
         }
         lexer_consume(lexer);
-        lexer_next_token(lexer);
+        tok = lexer_next_token(lexer);
     }else{
         switch (lexer->c){
             case ' ': case '\n': case '\t': case '\r':
