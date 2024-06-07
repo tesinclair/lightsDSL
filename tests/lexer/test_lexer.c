@@ -10,21 +10,24 @@ void test_lexer_from_example(){
         exit(EXIT_FAILURE);
     }
 
-    FILE *fptr = fopen("../../examples/pulse.lts", "r");
+    FILE *fptr = fopen("../examples/pulse.lts", "r");
+    if (fptr == NULL){
+        printf("No file\n");
+        exit(EXIT_FAILURE);
+    }
 
     char c;
     size_t index = 0;
     while ((c = fgetc(fptr)) != EOF){
         input[index] = c;
 
-        // it needs to be 1 more than length
         input = realloc(input, ++index + 1);
     }
 
     l = lexer_new_lexer(input);
     if (l == NULL){
         printf("\n");
-        exit(EXIT_SUCCESS);
+        exit(EXIT_FAILURE);
     }
 
     token *tokens = lexer_lex(l);
@@ -38,6 +41,7 @@ void test_lexer_from_example(){
     
     // I cannot be assed to check that it returns the right stuff, so instead
     // I'm just gonna return if it works
+    
     return;
 }
 
@@ -326,6 +330,31 @@ void test_lexer_lex(){
         DASH
     };
 
+    char *comparison_list_text[] = {
+        "< @ >",
+        "<use>",
+        "< { >",
+        "<10>",
+        "< } >",
+        "< ; >",
+        "< @ >",
+        "<decl>",
+        "<type>",
+        "< { >",
+        "< ( >",
+        "< ) >",
+        "<_>",
+        "<_word>",
+        "< : >",
+        "<387>",
+        "< = >",
+        "< | >",
+        "< | >",
+        "< - >",
+        "< - >",
+        "<EOF>"
+    };
+
     size_t comp_list_len = 21;
 
     for (int i = 0; i < comp_list_len; i++){
@@ -336,9 +365,15 @@ void test_lexer_lex(){
                 tok_list[i].type,
                 comparison_list[i]
                 );
+        testing_assert(
+                strncmp(tok_list[i].text, comparison_list_text[i], strlen(comparison_list_text[i])) == 0,
+                "<lexer_lex> returned \"%s\". Expected \"%s\".",
+                tok_list[i].text,
+                comparison_list_text[i]
+                );
+
         free(tok_list[i].text);
     }
-
     free(tok_list);
 
 }

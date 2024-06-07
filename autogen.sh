@@ -4,11 +4,12 @@ if [ -d ./bin/ ]; then
     rm -rf ./bin
 fi
 
-if [[ "$1" = "--fresh" || "$2" = "--fresh" ]]; then
+if [ -d ./dev/ ]; then
+    rm -rf ./dev
+fi
+
+if [[ "$3" = "--fresh" || "$2" = "--fresh" ]]; then
     rm ./.ignore/ensured
-    if [ ! -n $(echo "$1$2" 2>&1 | grep -s "(-)s") ]; then
-        1="-s"
-    fi
 fi
     
 
@@ -67,8 +68,13 @@ if [ "$1" = "-s" ]; then
     echo "making"
 fi
 
-cmake -B bin
-cmake --build bin/
+if [ "$1" == "--dev" ]; then
+    cmake -B dev -DCMAKE_BUILD_TYPE=Debug
+    cmake --build dev/
+else
+    cmake -B bin
+    cmake --build bin/
+fi
 
 echo "Finished."
 

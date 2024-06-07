@@ -57,13 +57,13 @@ token lexer_next_token(lexer *lexer){
     if (lexer->c == EOF){
         tok = token_new_token("<EOF>", 5, EOF);
     }else if (lexer->c == '#'){
-
         while (lexer->c != '\n'){
             lexer_consume(lexer);
-
-            if (lexer->c == EOF)
+            if (lexer->c == EOF){
                 tok = lexer_next_token(lexer);
+            }
         }
+        tok = lexer_next_token(lexer);
     }else if (lexer->c == '['){
         while (lexer->c != ']'){
             lexer_consume(lexer);
@@ -140,8 +140,7 @@ token lexer_next_token(lexer *lexer){
 
                     val = lexer_build_int(lexer);
 
-                    // Adding 2 for < and >
-                    len_val = (size_t) (ceil(log10(val)) + 2);
+                    len_val = snprintf(NULL, 0, "<%d>", val);
 
                     str_val = malloc(len_val + 1);
                     if (str_val == NULL){

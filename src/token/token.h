@@ -22,7 +22,8 @@ enum token_types{
     EQUAL,
     PIPE,
     DOLLAR,
-    DASH
+    DASH,
+    AMP
 };
 
 typedef struct{

@@ -12,10 +12,12 @@ add_library(error STATIC src/errors/errors.c src/errors/errors.h)
 add_library(utils STATIC src/utils/util.c src/utils/util.h)
 add_library(lexer STATIC src/lexer/lexer.c src/lexer/lexer.h)
 add_library(token STATIC src/token/token.c src/token/token.h)
+add_library(parser STATIC src/parser/parser.c src/parser/parser.h)
 
 target_link_libraries(
     lexer 
     PRIVATE 
+    parser
     error 
     utils 
     token 
@@ -28,6 +30,7 @@ add_executable(lights src/main.c)
 target_link_libraries(
     lights
     PRIVATE 
+    parser
     lexer 
     error 
     utils 
@@ -41,13 +44,16 @@ add_library(test_assert STATIC tests/testing_assert.c tests/testing_assert.h)
 add_library(test_lexer STATIC tests/lexer/test_lexer.c tests/lexer/test_lexer.h)
 add_library(test_util STATIC tests/utils/test_util.c tests/utils/test_util.h)
 add_library(test_token STATIC tests/token/test_token.c tests/token/test_token.h)
+add_library(test_parser STATIC tests/parser/test_parser.c tests/parser/test_parser.h)
 
 target_link_libraries(
     test_lexer
     PRIVATE
+    test_parser
     test_assert
     test_util
     lexer
+    parser
     error
     utils
     token
@@ -61,12 +67,14 @@ target_link_libraries(
     PRIVATE 
     lexer
     token
+    parser
     error
     utils
     test_assert
     test_lexer
     test_util
     test_token
+    test_parser
     m
 )
 

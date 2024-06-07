@@ -1,6 +1,5 @@
 root
     : '@' stat ';'
-    | '#' any
     ;
 stat
     : 'use' '{' INT '}'
@@ -25,7 +24,7 @@ decl
     | loop
     ;
 loop
-    : '_' letters
+    : '&' letters
     ;
 range
     : val ':' val
@@ -75,5 +74,3 @@ letters
 letter
     : [a-zA-Z]
     ;
-any
-    : -> skip
