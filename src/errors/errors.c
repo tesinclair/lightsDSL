@@ -16,7 +16,7 @@ void throw_lexing_error(char *errTextFormat, int errCode, ...){
     exit(errCode);
 }
 
-void throw_lexing_error(char *errTextFormat, int errCode, ...){
+void throw_parse_error(char *errTextFormat, int errCode, ...){
     va_list args;
 
     va_start(args, NULL);

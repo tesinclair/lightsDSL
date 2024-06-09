@@ -10,13 +10,13 @@ stat
     | 'for' '(' range ')' '|' var ( for_params ) '|' func
     | 'run' pin
     | 'brightness' assign
-    | 'delay' pin
-    | 'loop' (loop)
+    | 'delay' pin val
+    | 'loop' loop val
     | 'exit'
     ;
 pin
-    : 'pin'
-    | 'pins' '-' range
+    : 'pin' ('-' '{' range | INT '}')
+    | 'pins' '-' array
     ;
 decl
     : 'type' '{' type '}'
@@ -66,7 +66,7 @@ type
     ;
 var
     : '$' letters
-    | '$' letters ':' var
+    | '$' letters 
     ;
 letters
     : letter+

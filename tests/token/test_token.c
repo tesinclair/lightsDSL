@@ -1,62 +1,64 @@
 #include "test_token.h"
 
 void test_token_new_token(){
-    token tok;
+    token *tok;
+    size_t line_num = 0;
 
-    tok = token_new_token("< @ >", 5, AT);
+    tok = token_new_token("< @ >", 5, AT, &line_num);
 
     testing_assert(
-            strcmp(tok.text, "< @ >") == 0,
+            strcmp(tok->text, "< @ >") == 0,
             "<token_new_token> returned \"%s\". Expected \"< @ >\".",
-            tok.text
+            tok->text
             );
 
     testing_assert(
-            tok.type == AT,
+            tok->type == AT,
             "<token_new_token> returned \"%d\". Expected \"%d\".",
-            tok.type,
+            tok->type,
             AT
             );
 
-    free(tok.text);
+    free(tok->text);
 
     char *normal_text = "< ( >";
     size_t normal_size = 5;
     int normal_type = L_PAREN;
 
-    tok = token_new_token(normal_text, normal_size, normal_type);
+    tok = token_new_token(normal_text, normal_size, normal_type, &line_num);
 
     testing_assert(
-            strcmp(tok.text, "< ( >") == 0,
+            strcmp(tok->text, "< ( >") == 0,
             "<token_new_token> returned \"%s\". Expected \"< ( >\".",
-            tok.text
+            tok->text
             );
 
     testing_assert(
-            tok.type == L_PAREN,
+            tok->type == L_PAREN,
             "<token_new_token> returned \"%d\". Expected \"%d\".",
-            tok.type,
+            tok->type,
             L_PAREN 
             );
 
-    free(tok.text);
+    free(tok->text);
+    free(tok);
 
-    tok = token_new_token("<words>", 7, LETTERS);
+    tok = token_new_token("<words>", 7, LETTERS, &line_num);
 
     testing_assert(
-            strcmp(tok.text, "<words>") == 0,
+            strcmp(tok->text, "<words>") == 0,
             "<token_new_token> returned \"%s\". Expected \"<words>\".",
-            tok.text
+            tok->text
             );
 
     testing_assert(
-            tok.type == LETTERS,
+            tok->type == LETTERS,
             "<token_new_token> returned \"%d\". Expected \"%d\".",
-            tok.type,
+            tok->type,
             LETTERS 
             );
 
-    free(tok.text);
+    free(tok->text);
 }
 
 void test_token(){

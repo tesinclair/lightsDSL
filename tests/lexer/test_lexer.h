@@ -16,6 +16,8 @@ void test_lexer_build_string();
 
 void test_lexer_build_int();
 
+void test_lexer_from_example();
+
 // No testing yet - not used
 //void test_lexer_build_float();
 

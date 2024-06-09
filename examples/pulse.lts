@@ -18,7 +18,7 @@ create a pulsing light that changes between some chosen colors
 @set $colors = { (255, 255, 255), (132, 220, 198), (165, 255, 214), (255, 166, 158), (255, 104, 107) };
 
 # If the program loops, this is where it will loop from
-@decl _start;
+@decl &start;
 
 # Pick 1 random color and put it in $picked
 @pick $picked { $colors, 1 };
@@ -27,7 +27,7 @@ create a pulsing light that changes between some chosen colors
 @color pin - { 1:100 } = $picked;
 
 # Set max brightness to the commandline arg brightness, or 100 (if brightness isn't declared)
-@set $max_brightness = $args:$brightness | 100;
+@set $max_brightness = $brightness | 100;
 
 # set min brightness to 0
 @set $min_brightness = 0;
@@ -36,17 +36,17 @@ create a pulsing light that changes between some chosen colors
 @for ( $min_brightness:$max_brightness ) | $brightness | {
 
     # Set brightness on all pins to brightness
-    @brightess pin - { 1:100} = $brightness;
+    @brightness pin - { 1:100} = $brightness;
 
     # refresh the pin
     @run pin;
 
     # delay this pins for 100ms
-    @delay pin - { 100 };
+    @delay pin 100;
 };
 
 # Specifying the step should be -1
-@for ( $max_brightness:$min_brightness ) | $brightness, step { -1 } | { 
+@for ( $max_brightness:$min_brightness ) | $brightness | { 
     # Set brightness on all pins to the brightness
     @brightness pin - { 1:100 } = $brightness; 
 
@@ -54,11 +54,11 @@ create a pulsing light that changes between some chosen colors
     @run pin;
 
     # add a delay for this pin only for 100ms
-    @delay pin - { 100 };
+    @delay pin 100;
 };
 
-# If the loop commandline arg has been specified loop the code, else exit
-@loop | @exit
+# Loop back to &start 2 times
+@loop &start 2;
 
 
 

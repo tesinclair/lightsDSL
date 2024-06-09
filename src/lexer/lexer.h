@@ -19,6 +19,7 @@ typedef struct{
     char* input;
     int index;
     char c;
+    size_t line_num;
 } lexer;
 
 /// @params: takes a string input
@@ -26,10 +27,9 @@ typedef struct{
 /// @errors: returns NULL if input is not given
 lexer *lexer_new_lexer(char *input);
 
-/// @params: takes a lexer
+/// @params: takes a lexer, and a pointer to the token to fill
 /// @returns: returns a token, can be found in token.h
-/// @errors: None
-token lexer_next_token(lexer *lexer);
+token *lexer_next_token(lexer *lexer);
 
 /// @params: takes a lexer
 /// @returns: a string built from the lexer.
@@ -74,6 +74,6 @@ token lexer_letters(lexer *lexer);
 /// @returns: a list of tokens found in the input stream
 /// @errors: does not throw errors itself, 
 ///          but the functions it calls may
-token *lexer_lex(lexer *lexer);
+token **lexer_lex(lexer *lexer);
 
 #endif

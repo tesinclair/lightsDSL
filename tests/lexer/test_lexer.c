@@ -30,14 +30,14 @@ void test_lexer_from_example(){
         exit(EXIT_FAILURE);
     }
 
-    token *tokens = lexer_lex(l);
+    token **tokens = lexer_lex(l);
 
     size_t i = 0;
-    while (tokens[i].type != EOF){
-        free(tokens[i].text);
+    while (tokens[i]->type != EOF){
+        free(tokens[i]->text);
         i++;
     }
-    free(tokens[i].text);
+    free(tokens[i]->text);
     
     // I cannot be assed to check that it returns the right stuff, so instead
     // I'm just gonna return if it works
@@ -197,104 +197,107 @@ void test_lexer_build_int(){
 }
 
 void test_lexer_next_token(){
-    token tok;
+    token *tok;
 
-    lexer l = {
-        .input = "@set { 123;",
-        .index = 0,
-        .c = '@'
-    };
+    lexer *l = lexer_new_lexer("@set { 123;");
 
-    tok = lexer_next_token(&l);
+    tok = lexer_next_token(l);
 
     testing_assert(
-            tok.type == AT,
+            tok->type == AT,
             "<lexer_next_token> returned \"%d\". Expected \"%d\".",
-            tok.type,
+            tok->type,
             AT
             );
 
     testing_assert(
-            strcmp(tok.text, "< @ >") == 0,
+            strcmp(tok->text, "< @ >") == 0,
             "<lexer_next_token> returned \"%s\". Expected \"< @ >\".",
-            tok.text
+            tok->text
             );
 
 
-    free(tok.text);
+    free(tok->text);
+    free(tok);
 
-    tok = lexer_next_token(&l);
+    tok = lexer_next_token(l);
 
     testing_assert(
-            tok.type == LETTERS,
+            tok->type == LETTERS,
             "<lexer_next_token> returned \"%d\". Expected \"%d\".",
-            tok.type,
+            tok->type,
             LETTERS 
             );
 
     testing_assert(
-            strcmp(tok.text, "<set>") == 0,
+            strcmp(tok->text, "<set>") == 0,
             "<lexer_next_token> returned \"%s\". Expected \"<set>\".",
-            tok.text
+            tok->text
             );
 
-    free(tok.text);
+    free(tok->text);
+    free(tok);
 
-    tok = lexer_next_token(&l);
+    tok = lexer_next_token(l);
 
     testing_assert(
-            tok.type == L_CURLY_BRACE,
+            tok->type == L_CURLY_BRACE,
             "<lexer_next_token> returned \"%d\". Expected \"%d\".",
-            tok.type,
+            tok->type,
             L_CURLY_BRACE 
             );
 
     testing_assert(
-            strcmp(tok.text, "< { >") == 0,
+            strcmp(tok->text, "< { >") == 0,
             "<lexer_next_token> returned \"%s\". Expected \"< { >\".",
-            tok.text
+            tok->text
             );
 
-    free(tok.text);
+    free(tok->text);
+    free(tok);
 
-    tok = lexer_next_token(&l);
+    tok = lexer_next_token(l);
 
     testing_assert(
-            tok.type == INT,
+            tok->type == INT,
             "<lexer_next_token> returned \"%d\". Expected \"%d\".",
-            tok.type,
+            tok->type,
             INT 
             );
 
     testing_assert(
-            strcmp(tok.text, "<123>") == 0,
+            strcmp(tok->text, "<123>") == 0,
             "<lexer_next_token> returned \"%s\". Expected \"<123>\".",
-            tok.text
+            tok->text
             );
 
 
-    free(tok.text);
+    free(tok->text);
+    free(tok);
         
-    tok = lexer_next_token(&l);
+    tok = lexer_next_token(l);
 
     testing_assert(
-            tok.type == SEMI,
+            tok->type == SEMI,
             "<lexer_next_token> returned \"%d\". Expected \"%d\".",
-            tok.type,
+            tok->type,
             SEMI 
             );
 
     testing_assert(
-            strcmp(tok.text, "< ; >") == 0,
+            strcmp(tok->text, "< ; >") == 0,
             "<lexer_next_token> returned \"%s\". Expected \"< ; >\".",
-            tok.text
+            tok->text
             );
 
-    free(tok.text);
+    free(tok->text);
+    free(tok);
+
+    free(l);
 }
 
 void test_lexer_lex(){
-    token *tok_list;
+    token **tok_list;
 
     lexer l = {
         // There is a good change _ will regester as a letter, 
@@ -327,7 +330,8 @@ void test_lexer_lex(){
         PIPE,
         PIPE,
         DASH,
-        DASH
+        DASH,
+        EOF
     };
 
     char *comparison_list_text[] = {
@@ -355,24 +359,25 @@ void test_lexer_lex(){
         "<EOF>"
     };
 
-    size_t comp_list_len = 21;
+    size_t comp_list_len = 22;
 
     for (int i = 0; i < comp_list_len; i++){
         testing_assert(
-                comparison_list[i] == tok_list[i].type,
+                comparison_list[i] == tok_list[i]->type,
                 "<lexer_lex> (\"%s\") returned \"%d\". Expected \"%d\".",
-                tok_list[i].text,
-                tok_list[i].type,
+                tok_list[i]->text,
+                tok_list[i]->type,
                 comparison_list[i]
                 );
         testing_assert(
-                strncmp(tok_list[i].text, comparison_list_text[i], strlen(comparison_list_text[i])) == 0,
+                strncmp(tok_list[i]->text, comparison_list_text[i], strlen(comparison_list_text[i])) == 0,
                 "<lexer_lex> returned \"%s\". Expected \"%s\".",
-                tok_list[i].text,
+                tok_list[i]->text,
                 comparison_list_text[i]
                 );
 
-        free(tok_list[i].text);
+        free(tok_list[i]->text);
+        free(tok_list[i]);
     }
     free(tok_list);
 

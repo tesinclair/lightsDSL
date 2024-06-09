@@ -8,23 +8,23 @@
 #include "../errors/errors.h"
 
 typedef struct {
-    token *token_stream[];
-    token current_token;
+    token *current_token;
     size_t index;
+    token **token_stream;
 } parser;
 
 /// @Params: a token stream
 /// @returns: a new parser starting at the first token in the stream
-parser *parser_new_parser(token *token_stream[]);
+parser *parser_new_parser(token **token_stream);
 
 /// @Params: a parser
 /// @Purpose: moved the index and current token to the next
 ///         in the token_stream
 void parser_consume(parser *p);
 
-/// @Params: a token to match and a parser
-/// @Errors: Throws a parse error if match is false
-void parser_match(parser *p, int token_key, char *token_text);
+/// @Params: a token to expect and a parser
+/// @Errors: Throws a parse error if expect is false
+void parser_expect(parser *p, int token_key, char *token_text);
 
 /// @Params: a parser
 /// @Errors: throws parsing error
@@ -34,7 +34,7 @@ void parser_parse(parser *p);
 /// @param: parser
 /// @returns True if the current token is the 
 ///         start of a function else false
-int isFunc(parser *p);
+int parser_is_func(parser *p);
 
 /// @Section: these are all the individual parsers
 
@@ -69,5 +69,7 @@ void parser_parse_type(parser *p);
 void parser_parse_var(parser *p);
 
 void parser_parse_letters(parser *p);
+
+void parser_parse_item(parser *p);
 
 #endif

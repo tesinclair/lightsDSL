@@ -15,11 +15,12 @@ int main(){
     printf("\033[1;32mLexing Tests Passed\n\n\033[0;37m");
 
     test_parser();
-    printf("\033[1;32mParseing Tests Passed\n\n\033[0;37m");
+    printf("\033[1;32mParsing Tests Passed\n\n\033[0;37m");
 
-    printf("\n\n\033[1;32m=-=-=-=-=-=-=-=-=-=-=-=\n");
+    printf("\n\033[1;32m=-=-=-=-=-=-=-=-=-=-=-=\n");
     printf("   ALL TESTS PASSED!\n");
     printf("=-=-=-=-=-=-=-=-=-=-=-=\n\n");
+    printf("\033[0;37m");
     fflush(stdout);
 
     return 0;

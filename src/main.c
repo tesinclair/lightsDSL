@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "lexer/lexer.h"
+#include "parser/parser.h"
 
 int is_valid_file(char *file){
     int file_len = strlen(file);
@@ -39,6 +40,7 @@ int is_valid_file(char *file){
 int main(int argc, char *argv[]){
     FILE *fptr;
     lexer *l;
+    parser *p;
     char *input;
 
     if (argc < 2){
@@ -79,5 +81,9 @@ int main(int argc, char *argv[]){
         exit(EXIT_SUCCESS);
     }
 
-    token *tokens = lexer_lex(l);
+    token **tokens = lexer_lex(l);
+    
+    p = parser_new_parser(tokens);
+
+    parser_parse(p);
 }
