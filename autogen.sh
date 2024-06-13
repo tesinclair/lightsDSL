@@ -1,17 +1,65 @@
 #!/bin/bash
 
-if [ -d ./bin/ ]; then
-    rm -rf ./bin
+if [[ "$1" = "--help" ]]; then
+    echo "=-=-=-=-=-=-=-=-="
+    echo "|     USAGE     |"
+    echo "=-=-=-=-=-=-=-=-="
+    echo ""
+    echo "Options:"
+    echo "    - [--fresh]: Removes '.ignore/ensured' and runs a fresh install"
+    echo "                 Use this, if you have updated and the file still exists"
+    echo ""
+    echo "    - [--lib]:   adds lights-dsl.h to package-config path (must have pkg-config"
+    echo "                 for this to work) for development"
+    echo ""
+    echo "    - [-s]:      Silent: do everything, but keep your mouth shut"
+    echo ""
+    echo "    - [--dev]:   Build into ./dev/ with developer flags"
+    echo ""
+    echo "    - [--help]:  Display usage info"
+    echo ""
+    
+    exit 0
 fi
 
-if [ -d ./dev/ ]; then
-    rm -rf ./dev
+fresh=false
+lib=false
+s=false
+dev=false
+
+for arg in "$@"; do
+    if [ "$arg" = "--fresh" ]; then
+        fresh=true
+    fi
+    if [ "$arg" = "--lib" ]; then
+        lib=true
+    fi
+    if [ "$arg" = "-s" ]; then
+        s=true
+    fi
+    if [ "$arg" = "--dev" ]; then
+        dev=true
+    fi
+done
+
+if [[ "$dev" = false ]]; then
+    if [ -d ./bin/ ]; then
+        rm -rf ./bin
+    fi
+else
+    if [ -d ./dev/ ]; then
+        rm -rf ./dev/
+    fi
 fi
 
-if [[ "$3" = "--fresh" || "$2" = "--fresh" ]]; then
+if [[ "$fresh" = true ]]; then
     rm ./.ignore/ensured
 fi
-    
+
+if [[ "$lib" = true ]]; then
+    pkg_conf="/usr/include"
+    cp ./include/lights-dsl.pc "$pkg_conf"
+fi
 
 mkdir -p .ignore
 
@@ -21,9 +69,9 @@ if [ ! -f .ignore/ensured ]; then
     
     DEPS="deps.txt"
 
-    if [[ "$auto" = "y" && ! "$1" = "-s" ]]; then
+    if [[ "$auto" = "y" && $s = false ]]; then
         echo "Installing dependencies automatically"
-    elif [ ! "$1" = "-s" ]; then
+    elif [ ! "$s" = true ]; then
         echo "Checking dependencies"
     fi
 
@@ -32,13 +80,13 @@ if [ ! -f .ignore/ensured ]; then
             continue
         fi
 
-        if [ ! "$1" = "-s" ]; then
+        if [ $s = false ]; then
             echo "Checking $dep"
         fi
 
         installed=$(apt install --simulate "$dep" 2>&1 | grep -s "$dep is already")
         if [ ! -n "$installed" ]; then
-            if [ ! "$1" = "-s" ]; then
+            if [ $s = false ]; then
                 echo "Not found."
             fi
             
@@ -59,16 +107,12 @@ if [ ! -f .ignore/ensured ]; then
     touch .ignore/ensured
 fi
 
-if [ "$1" = "-s" ]; then
+if [ $s = false ]; then
     echo "Finished checking deps."
-    echo "Creating makefile"
+    echo "Creating files now."
 fi
                 
-if [ "$1" = "-s" ]; then
-    echo "making"
-fi
-
-if [ "$1" == "--dev" ]; then
+if [ $dev == true ]; then
     cmake -B dev -DCMAKE_BUILD_TYPE=Debug
     cmake --build dev/
 else
@@ -76,5 +120,6 @@ else
     cmake --build bin/
 fi
 
-echo "Finished."
+echo "Done."
+echo "You can find the executable in bin/, or dev/"
 

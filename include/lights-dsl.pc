@@ -1,0 +1,10 @@
+prefix=/home/blyk/workspace/lightsDSL
+exec_prefix=${prefix}/bin
+libdir=${prefix}/src
+includedir=${prefix}/include
+
+Name: lights-dsl
+Description: A DSL for gpio interfacing
+Version: 0.0.1
+Libs: -L${libdir} -llights-dsl
+cflags: -I${includedir}
